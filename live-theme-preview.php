@@ -227,10 +227,10 @@ if (!class_exists('WP_LiveThemePreview')) :
          *
          * @return array
          */
-        public function return_theme_options() {
+        public function return_theme_options( $i ) {
             if ( $_GET['stylesheet'] != get_option( 'stylesheet' ) )
                 return get_option ( 'theme_mods_' . $_GET['stylesheet'] );
-            else return array();
+            else return false;
         }
 
         /**
