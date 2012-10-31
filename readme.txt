@@ -12,7 +12,11 @@ Live Theme Preview allows users to preview themes on their own website before cu
 
 == Description ==
 
-With Live Theme Preview, you can select a theme in an interface based on the Theme Customizer in WordPress. A sidebar shows all installed themes (or, with multisite - allowed themes), to preview, edit or activate. The screenshots will speak for themselves!
+With Live Theme Preview, you can select a theme in an interface based on the Theme Customizer in WordPress. A sidebar shows all installed themes (or, with multisite - allowed themes), to preview, edit or activate.
+
+See the screenshot, or install and try it for yourself.
+
+*If you want to help develop this plugin, visit the [GitHub repo](https://github.com/mgmartel/WP-Live-Theme-Preview).*
 
 = Features =
 * Seamless integration with Theme Customizer
