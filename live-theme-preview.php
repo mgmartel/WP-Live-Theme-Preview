@@ -91,9 +91,8 @@ if (!class_exists('WP_LiveThemePreview')) :
          * @since 0.1
          */
         protected function maybe_activate() {
-            if($_GET['activate'] && check_admin_referer( 'live-theme-preview' ) ) {
-                $newtheme = $_GET['activate'];
-                switch_theme($newtheme, $newtheme);
+            if( $_GET['action'] && $_GET['action'] == 'activate' && check_admin_referer( 'live-theme-preview_' . $_GET['stylesheet'] ) ) {
+                switch_theme( $_GET['stylesheet'] );
             }
         }
 
@@ -182,9 +181,9 @@ if (!class_exists('WP_LiveThemePreview')) :
             if( $active )
                 $selected_theme = ' selected_theme';
 
-            $activateurl = wp_nonce_url ( admin_url ( 'themes.php/?live=1&activate=' . $stylesheet ), 'live-theme-preview' );
+            $activateurl = wp_nonce_url ( apply_filters ( 'wp_ltp_activateurl', admin_url ( "themes.php/?live=1&action=activate&template=" . urlencode( $template ) . "&stylesheet=" . urlencode ( $stylesheet ) ) ), "live-theme-preview_$stylesheet" );
 
-            $editurl = wp_customize_url( $stylesheet );
+            $editurl = apply_filters ( 'wp_ltp_editurl', wp_customize_url( $stylesheet ) );
 
             ?>
 
