@@ -7,7 +7,7 @@
  */
 
 // This is all the data we need in our view
-global $active_theme;
+global $active_theme, $return;
 
 $available_themes  = wp_get_themes( array('allowed' => true) );
 
