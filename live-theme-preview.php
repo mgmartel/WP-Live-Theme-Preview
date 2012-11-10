@@ -256,5 +256,6 @@ if (!class_exists('WP_LiveThemePreview')) :
                 $return = admin_url("themes.php?live=1&theme={$wp_customize->get_stylesheet()}");
         }
     }
-    WP_LiveThemePreview::init();
+    //WP_LiveThemePreview::init();
+    add_action ( 'init', array ( 'WP_LiveThemePreview', 'init' ) );
 endif;
