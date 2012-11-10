@@ -18,7 +18,7 @@ if (!defined('ABSPATH'))
  *
  * @since 0.1
  */
-define ( 'WP_LTP_VERSION', '0.1' );
+define ( 'WP_LTP_VERSION', '0.9' );
 
 /**
  * PATHs and URLs
