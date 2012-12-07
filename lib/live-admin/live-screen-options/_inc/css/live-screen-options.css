@@ -56,8 +56,8 @@
 
 }
 
-/* Hide screen options */
-#live-admin-screen-options #hide-screen-options {
+/* Show and hide screen options */
+#live-admin-screen-options .hide-screen-options, .show-screen-options {
     font-size: 12px;
     line-height: 34px;
     border-width: 0 0 1px;

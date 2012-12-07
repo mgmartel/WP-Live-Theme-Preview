@@ -69,7 +69,8 @@ if ( !class_exists ( 'WP_LiveAdmin_LiveMenu' ) ) :
         }
 
         private function menu_button() {
-            return '<a href="" class="button toggle-menu">' . __("Menu") . '</a>';
+            //return '<a href="" class="button toggle-menu">' . __("Menu") . '</a>';
+            return '<a href="" class="button toggle-menu">' . __("&#9776;") . '</a>';
         }
 
 

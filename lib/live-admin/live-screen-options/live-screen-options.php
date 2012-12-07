@@ -56,7 +56,19 @@ if ( !class_exists ( 'WP_LiveAdmin_LiveScreenOptions' ) ) :
             }
 
         public function show_toggle() {
-            echo "<a href='#' class='toggle-screen-options'>Screen Options</a>";
+            ?>
+            <div class="show-screen-options hide-if-no-js toggle-screen-options">
+                <div id="collapse-button" style=''><div style='background-position: 0 -108px;'></div></div><span>Show screen options</span>
+            </div>
+            <?php
+        }
+
+        protected function show_hide_toggle() {
+            ?>
+            <div id="" class="hide-screen-options hide-if-no-js toggle-screen-options">
+                    <div id="collapse-button"><div></div></div><span>Hide screen options</span>
+            </div>
+            <?php
         }
 
         public function load_screen_options() {
@@ -65,21 +77,18 @@ if ( !class_exists ( 'WP_LiveAdmin_LiveScreenOptions' ) ) :
             $screen = convert_to_screen( $screen );
 
             if ( ! $screen ) return;
-            
+
             ?>
             <div id="live-admin-screen-options" class="collapsed">
-                <div id="hide-screen-options" class="hide-if-no-js toggle-screen-options">
-                    <div id="collapse-button"><div></div></div><span>Hide screen options</span>
-                </div>
 
                 <?php
+                $this->show_hide_toggle();
 
                 $screen->render_screen_options();
                 wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce', false );
                 wp_nonce_field( 'meta-box-order', 'meta-box-order-nonce', false );
 
-                $this->show_toggle();
-
+                $this->show_hide_toggle();
                 ?>
 
             </div>

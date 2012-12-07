@@ -8,11 +8,11 @@
 }
 
 #adminmenuback, #adminmenuwrap {
-	-webkit-transition-property: left, right, top, bottom, width, margin;
-	-moz-transition-property:    left, right, top, bottom, width, margin;
-	-ms-transition-property:     left, right, top, bottom, width, margin;
-	-o-transition-property:      left, right, top, bottom, width, margin;
-	transition-property:         left, right, top, bottom, width, margin;
+	-webkit-transition-property: margin;
+	-moz-transition-property:    margin;
+	-ms-transition-property:     margin;
+	-o-transition-property:      margin;
+	transition-property:         margin;
 
 	-webkit-transition-duration: 0.2s;
 	-moz-transition-duration:    0.2s;

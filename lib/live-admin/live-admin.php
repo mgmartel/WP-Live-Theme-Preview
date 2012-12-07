@@ -3,6 +3,10 @@
 if ( !defined ( 'ABSPATH' ) )
     exit;
 
+// Return if already defined
+if ( defined ( 'LIVE_ADMIN_VERSION' ) )
+    return;
+
 /**
  * Version number
  *
@@ -17,8 +21,13 @@ define ( 'LIVE_ADMIN_VERSION', '0.1' );
  */
 define ( 'LIVE_ADMIN_DIR', plugin_dir_path ( __FILE__ ) );
 define ( 'LIVE_ADMIN_URL', plugin_dir_url ( __FILE__ ) );
-//define ( 'LIVE_ADMIN_URL', plugin_dir_url ( __FILE__ ) );
 define ( 'LIVE_ADMIN_INC_URL', LIVE_ADMIN_URL . '_inc/' );
+
+/**
+ * Requires and includes
+ */
+require_once ( LIVE_ADMIN_DIR . 'functions.php' );
+require_once ( LIVE_ADMIN_DIR . 'lib/class.settings.php' );
 
 class WP_LiveAdmin
 {
@@ -56,15 +65,35 @@ class WP_LiveAdmin
              * Disables following of links within the iFrame
              */
             $disable_nav    = false,
+
+            /**
+             * Disables live admin's listeners
+             */
+            $disable_listeners    = false,
+
+            /**
+             * Custom JS vars
+             */
+            $custom_js_vars = array(),
+
+            /**
+             * Minimum user capability
+             */
+            $capability = 'edit_posts',
+
             $postbox_class  = 'postbox-live';
 
         public function _register() {
+            global $handle;
+            $handle = $this->handle;
+
+            $this->check_permissions();
 
             $this->enqueue_live_admin_styles_and_scripts();
             $this->enqueue_styles_and_scripts();
             $this->actions_and_filters();
 
-            if ( empty ( $iframe_url ) )
+            if ( empty ( $this->iframe_url ) )
                 $this->iframe_url = get_bloginfo('url');
 
             if ( $this->menu )
@@ -78,9 +107,17 @@ class WP_LiveAdmin
             exit;
         }
 
+        private function check_permissions() {
+            if ( ! current_user_can( $this->capability ) )
+                wp_die( __( 'Cheatin&#8217; uh?' ) );
+        }
+
         private function enqueue_live_admin_styles_and_scripts() {
             wp_enqueue_script( 'live-admin', LIVE_ADMIN_INC_URL . 'js/live-admin.js', array ( 'jquery' ), 0.1 );
             wp_enqueue_style( 'live-admin', LIVE_ADMIN_INC_URL . 'css/live-admin.css', array ( 'customize-controls'), 0.1 );
+
+            if ( ! empty ( $this->custom_js_vars ) )
+                wp_localize_script ( 'live-admin', 'liveAdmin', $this->custom_js_vars );
         }
 
         protected function actions_and_filters() {
@@ -112,7 +149,7 @@ class WP_LiveAdmin
         protected function enqueue_styles_and_scripts() {}
 
         public function do_buttons() {
-            asort ( $this->buttons );
+            ksort ( $this->buttons );
             foreach ( $this->buttons as $button ) {
                 echo $button;
             }
@@ -161,12 +198,25 @@ class WP_LiveAdmin
         }
 
 
-
         /**
          * A couple re-usable template items
          */
         public function logout_button() {
             return '<a href="' . wp_logout_url() . '" class="button" id="log-out">' . __("Log out") . '</a>';
+        }
+
+        public function switch_button( $text = '' ) {
+            global $live_admin_settings;
+            return '<a href="' . $live_admin_settings->switch_url() . '" class="button" id="log-out">' . __("Switch Interface", 'live-admin') . '</a>';
+        }
+
+        public function switch_url() {
+            if ( empty ( $this->switch_url ) ) {
+                global $live_admin_settings;
+                $this->switch_url = $live_admin_settings->switch_url();
+            }
+            
+            return $this->switch_url;
         }
 
         public function my_account_button() {
@@ -190,6 +240,10 @@ class WP_LiveAdmin
                     );
 
             return $link;
+
+        }
+
+        public function get_displayed_post_id() {
 
         }
 

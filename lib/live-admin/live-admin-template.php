@@ -38,7 +38,14 @@ if ( is_rtl() )
 	$body_class .=  ' rtl';
 $body_class .= ' locale-' . sanitize_html_class( strtolower( str_replace( '_', '-', get_locale() ) ) );
 
-global $admin_title, $current_screen, $current_user, $wp_locale, $handle;
+global $title, $current_screen, $current_user, $wp_locale, $handle;
+
+if ( empty( $current_screen ) )
+	set_current_screen();
+
+get_admin_page_title();
+$title = esc_html( strip_tags( $title ) );
+$admin_title = sprintf( __( '%1$s &lsaquo; %2$s &#8212; WordPress' ), $title, get_bloginfo('name') );
 
 ?><title><?php echo $admin_title; ?></title>
 <script type="text/javascript">
@@ -54,11 +61,12 @@ var userSettings = {
 	thousandsSeparator = '<?php echo addslashes( $wp_locale->number_format['thousands_sep'] ); ?>',
 	decimalPoint = '<?php echo addslashes( $wp_locale->number_format['decimal_point'] ); ?>',
 	isRtl = <?php echo (int) is_rtl(); ?>;
-    iframeUrl = "<?php echo esc_attr( $this->iframe_url ); ?>";
+    iframeUrl = "<?php echo $this->iframe_url; ?>";
+
     overrideIFrameLoader = <?php echo ( $this->override_iframe_loader ) ? 'true' : 'false'; ?>;
     disableNavigation = <?php echo ( $this->disable_nav ) ? 'true' : 'false'; ?>;
+    disableListeners = <?php echo ( $this->disable_listeners ) ? 'true' : 'false'; ?>;
 </script><?php
-
 do_action( "admin_print_styles-$handle" );
 do_action( "admin_print_scripts-$handle" );
 do_action( "admin_print_styles" );
@@ -80,6 +88,8 @@ $overlay_class = ( $this->collapsed ) ? ' collapsed' : ' expanded';
 <?php do_action('live_admin_before_wpwrap'); ?>
 
 <div class="wp-full-overlay<?php echo $overlay_class; ?>" id="wpwrap">
+
+    <?php do_action('live_admin_before_admin-controls'); ?>
 
     <div id="live-admin-controls" class="wrap wp-full-overlay-sidebar">
 
@@ -114,6 +124,9 @@ $overlay_class = ( $this->collapsed ) ? ' collapsed' : ' expanded';
 		</div>
 
 	</div>
+
+    <?php do_action ( 'live_admin_after_admin-controls' ); ?>
+
 	<div id="live-admin-preview" class="wp-full-overlay-main">
 
         <?php do_action ( 'before_live_admin_preview' ); ?>
