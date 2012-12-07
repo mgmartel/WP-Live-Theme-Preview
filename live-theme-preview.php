@@ -80,7 +80,6 @@ if (!class_exists('WP_LiveThemePreview')) :
          */
         public function live() {
             $this->maybe_activate();
-            $this->enqueue_styles_and_scripts();
             $this->display();
             exit;
         }
@@ -103,9 +102,6 @@ if (!class_exists('WP_LiveThemePreview')) :
          * @todo Make the admin menu modification optional
          */
         private function actions_and_filters() {
-            // We'll load our own scripts
-            add_action ( "wp_ltp_print_scripts", array ( &$this, "print_scripts" ) );
-
             // Make sure theme options of the previewed theme are loaded when available
             if ( $_REQUEST['preview'] && true == $_REQUEST['preview'] )
                 add_filter( 'pre_option_theme_mods_' . get_option( 'stylesheet' ), array ( &$this, 'return_theme_options' ) );
@@ -144,81 +140,12 @@ if (!class_exists('WP_LiveThemePreview')) :
         }
 
         /**
-         * Enqueue scripts and styles
-         *
-         * @since 0.1
-         */
-        protected function enqueue_styles_and_scripts() {
-            wp_enqueue_style("live-theme-preview", WP_LTP_INC_URL . 'css/live-theme-preview.css', array ("customize-controls"), "0.1" );
-            wp_enqueue_script("live-theme-preview", WP_LTP_INC_URL . 'js/live-theme-preview.js', array ("jquery"), "0.1" );
-        }
-
-        /**
          * Load the template
          *
          * @since 0.1
          */
         protected function display() {
-            require( WP_LTP_DIR . '/template.php' );
-        }
-
-        /**
-         * Renders a theme button in the sidebar
-         *
-         * @param str $theme
-         * @param bool $active
-         * @since 0.1
-         */
-        protected function the_theme_button ( $theme, $active = false ) {
-            $screenshot =  $theme['Screenshot'];
-            $template = $theme['Template'];
-            $stylesheet = $theme['Stylesheet'];
-
-            $previewed_theme = trailingslashit ( get_theme_root_uri( $stylesheet ) ) . $stylesheet . '/' . $screenshot;
-
-            $selected_theme = '';
-
-            if( $active )
-                $selected_theme = ' selected_theme';
-
-            $activateurl = wp_nonce_url ( apply_filters ( 'wp_ltp_activateurl', admin_url ( "themes.php/?live=1&action=activate&template=" . urlencode( $template ) . "&stylesheet=" . urlencode ( $stylesheet ) ) ), "live-theme-preview_$stylesheet" );
-
-            $editurl = apply_filters ( 'wp_ltp_editurl', wp_customize_url( $stylesheet ) );
-
-            ?>
-
-            <div class="thumbnail<?php echo $selected_theme; ?>" id="<?php echo $stylesheet ?>" style="background-image: url('<?php echo $previewed_theme;?>');"></div>
-
-            <input type="hidden" name="template" class="<?php echo $stylesheet; ?>" value="<?php echo $template; ?>"/>
-
-            <div class="buttons">
-
-                <input class="button-secondary" id="edit_theme_button" type="button" value="<?php _e('Edit','themeselector');?>" ONCLICK="window.location.href='<?php echo $editurl;?>'">
-
-                <?php if ( ! $active ) : ?>
-                    <input class="button-primary" id="use_theme_button" type="button" value="<?php _e('Activate','themeselector');?>" ONCLICK="window.location.href='<?php echo $activateurl;?>'">
-                <?php endif; ?>
-
-            </div>
-
-
-            <p class="title">
-
-                <?php echo $theme['Title']?>
-
-                <?php if ( $active ) : ?>
-
-                    <strong>current</strong>
-
-                <?php endif; ?>
-
-                <br>
-                <span class="author">
-                    <?php _e('by');?><a href="<?php $theme['Author'];?>"><?php echo $theme['Author Name'];?></a>
-                </span>
-
-            </h3>
-            <?php
+            require( WP_LTP_DIR . '/live-theme-preview-template.php' );
         }
 
         /**
