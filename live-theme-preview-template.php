@@ -97,7 +97,7 @@ if ( ! class_exists ( 'WP_LiveThemePreview_Template' ) ) :
             if( $active )
                 $selected_theme = ' selected_theme';
 
-            $activateurl = wp_nonce_url ( apply_filters ( 'wp_ltp_activateurl', admin_url ( "themes.php/?live=1&action=activate&template=" . urlencode( $template ) . "&stylesheet=" . urlencode ( $stylesheet ) ) ), "live-theme-preview_$stylesheet" );
+            $activateurl = wp_nonce_url ( apply_filters ( 'wp_ltp_activateurl', admin_url ( "themes.php/?live_themes=1&action=activate&template=" . urlencode( $template ) . "&stylesheet=" . urlencode ( $stylesheet ) ) ), "live-theme-preview_$stylesheet" );
 
             $editurl = apply_filters ( 'wp_ltp_editurl', wp_customize_url( $stylesheet ) );
 
@@ -149,11 +149,6 @@ if ( ! class_exists ( 'WP_LiveThemePreview_Template' ) ) :
                 $return = $url;
 
             return '<a href="'. esc_url( $return ? $return : admin_url( 'themes.php' ) ) . '" class="back button">' . __( 'Close' ) . '</a>';
-            return '
-            <form method="link" action="' . esc_url( $return ? $return : admin_url( 'themes.php' ) ) . '">
-                    <input class="back button" id="themes_cancel_button" type="submit" value="' . __( 'Close' ) . '">
-            </form>
-            ';
         }
 
     }
