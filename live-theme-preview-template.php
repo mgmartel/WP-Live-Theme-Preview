@@ -16,7 +16,7 @@ if ( ! class_exists ( 'WP_LiveThemePreview_Template' ) ) :
 
         public function __construct() {
             $this->menu = true;
-            $this->capability = 'edit_theme_options';
+            $this->capability = 'switch_themes';
 
             $tmp = get_theme( get_current_theme() );
             $this->active_theme = $tmp['Stylesheet'];
@@ -58,7 +58,7 @@ if ( ! class_exists ( 'WP_LiveThemePreview_Template' ) ) :
             // Globals
             $title = __('Manage Themes');
             $parent_file = 'themes.php';
-            $submenu_file = 'themes.php?live=1';
+            $submenu_file = 'themes.php?live_themes=1';
 
             $handle = 'themes.php';
 
