@@ -33,6 +33,8 @@ if (!class_exists('WP_LiveThemePreview')) :
 
     class WP_LiveThemePreview    {
 
+        public $settings;
+
         /**
          * Creates an instance of the WP_LiveThemePreview class
          *
@@ -44,7 +46,7 @@ if (!class_exists('WP_LiveThemePreview')) :
             static $instance = false;
 
             if (!$instance) {
-                //load_plugin_textdomain('wp-ltp', false, WP_LTP_DIR . '/languages/');
+                load_plugin_textdomain('live-theme-preview', false, WP_LTP_DIR . '/languages/');
                 $instance = new WP_LiveThemePreview;
             }
 
@@ -57,9 +59,20 @@ if (!class_exists('WP_LiveThemePreview')) :
          * @since 0.1
          */
         public function __construct() {
+            /**
+             * Requires and includes
+             */
+            require_once ( LIVE_DASHBOARD_DIR . 'lib/live-admin/live-admin.php' );
+            $this->settings = new WP_LiveAdmin_Settings(
+                    'themes',
+                    __('Live Theme Preview', 'live-theme-preview'),
+                    __('Use the Live Theme Preview as the default theme chooser (adds an extra menu item for the default theme chooser)','live-theme-preview'),
+                    'true'
+                    );
+
             $this->actions_and_filters();
 
-            if ( isset($_REQUEST['live']) && $_REQUEST['live'] == true && $GLOBALS['pagenow'] == 'themes.php' )
+            if ( $this->settings->is_activated() )
                 add_action ('admin_init', array ( &$this, 'live' ) );
 
         }
@@ -106,10 +119,16 @@ if (!class_exists('WP_LiveThemePreview')) :
             if ( $_REQUEST['preview'] && true == $_REQUEST['preview'] )
                 add_filter( 'pre_option_theme_mods_' . get_option( 'stylesheet' ), array ( &$this, 'return_theme_options' ) );
 
-            // Set Live Preview as the default theme selector in the WP admin menus
-            add_action('admin_menu', array ( 'WP_LiveThemePreview', 'set_as_theme_chooser' ) );
-            // and as the default return for the Theme Customizer if the theme is not active
-            add_action('customize_controls_init', array ( &$this, 'modify_redirect' ) );
+            if ( $this->settings->is_default() ) {
+                // Set Live Preview as the default theme selector in the WP admin menus
+                add_action('admin_menu', array ( &$this, 'set_as_theme_chooser' ) );
+
+                // and as the default return for the Theme Customizer if the theme is not active
+                add_action('customize_controls_init', array ( &$this, 'modify_redirect' ) );
+            } else {
+                // Set Live Preview as the default theme selector in the WP admin menus
+                add_action('admin_menu', array ( &$this, 'add_menu_item' ) );
+            }
         }
 
         /**
@@ -164,11 +183,20 @@ if (!class_exists('WP_LiveThemePreview')) :
          *
          * @global array $submenu
          */
-        public static function set_as_theme_chooser() {
+        public function set_as_theme_chooser() {
             global $submenu;
 
-            $submenu['themes.php'][5][2] .= "?live=1";
+            $submenu['themes.php'][5][2] .= "?live_themes=1";
             add_submenu_page('themes.php','', 'Manage Themes', 'switch_themes', 'themes.php');
+        }
+
+        /**
+         * Add LTP menu item
+         *
+         * @global array $submenu
+         */
+        public function add_menu_item() {
+            add_submenu_page('themes.php','', 'Live Theme Preview', 'switch_themes', 'themes.php?live_themes=1');
         }
 
         /**
@@ -180,7 +208,7 @@ if (!class_exists('WP_LiveThemePreview')) :
         public function modify_redirect() {
             global $return, $wp_customize;
             if ( ! $wp_customize->is_theme_active() )
-                $return = admin_url("themes.php?live=1&theme={$wp_customize->get_stylesheet()}");
+                $return = admin_url("themes.php?live_themes=1&theme={$wp_customize->get_stylesheet()}");
         }
     }
     //WP_LiveThemePreview::init();
