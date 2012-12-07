@@ -71,11 +71,12 @@ if ( ! class_exists ( 'WP_LiveAdmin_Settings' ) ) :
             private function current_user_settings() {
                 $current_user_settings = get_user_meta( get_current_user_id(), 'live-admin', true );
 
+                // Is not supposed to happen
                 if ( empty ( $current_user_settings ) || ! is_array ( $current_user_settings ) )
                     $current_user_settings = $this->set_default_settings();
 
-                if ( ! is_string ( $current_user_settings[$this->handle] ) )
-                    $current_user_settings = $this->set_default_settings( $this->handle, $current_user_settings );
+                /*if ( ! isset ( $current_user_settings[$this->handle] ) )
+                    $current_user_settings = $this->set_default_settings( $current_user_settings );*/
 
                 $this->current_user_settings = $current_user_settings;
                 $this->current_user_setting = $current_user_settings[$this->handle];
@@ -101,7 +102,7 @@ if ( ! class_exists ( 'WP_LiveAdmin_Settings' ) ) :
             return apply_filters ( 'live_admin_is_default-' . $handle, &$this->is_default );
         }
 
-        function is_active () {
+        public function is_active () {
             if ( ! is_null ( $this->is_active ) )
                 return $this->is_active;
 
@@ -114,8 +115,8 @@ if ( ! class_exists ( 'WP_LiveAdmin_Settings' ) ) :
             $live_admin_settings = $this;
 
             $is_default = $this->is_default();
-            $is_deactivated = ( isset($_REQUEST['live_' . $this->handle]) && $_REQUEST['live_' . $this->handle] == false  );
-            $is_activated = ( isset($_REQUEST['live_' . $this->handle]) && $_REQUEST['live_' . $this->handle] == true  );
+            $is_deactivated = $this->is_deactivated();
+            $is_activated = $this->is_activated();
 
             if ( $is_default )
                 $this->is_active = ( ! $is_deactivated );
@@ -123,6 +124,14 @@ if ( ! class_exists ( 'WP_LiveAdmin_Settings' ) ) :
                 $this->is_active = ( $is_activated );
 
             return apply_filters ( 'live_admin_is_active-' . $handle, &$this->is_active );
+        }
+
+        public function is_activated() {
+            return ( isset($_REQUEST['live_' . $this->handle]) && $_REQUEST['live_' . $this->handle] == true  );
+        }
+
+        public function is_deactivated() {
+            return ( isset($_REQUEST['live_' . $this->handle]) && $_REQUEST['live_' . $this->handle] == false  );
         }
 
 
@@ -156,6 +165,7 @@ if ( ! class_exists ( 'WP_LiveAdmin_Settings' ) ) :
                 <th scope="row"><?php echo $this->option_name; ?></th>
                 <td>
                     <label for="live_admin_<?php echo $this->handle; ?>">
+                        <input type="hidden" name="live_admin_options[<?php echo $this->handle; ?>]" value="false">
                         <input name="live_admin[<?php echo $this->handle; ?>]" type="checkbox" id="live_admin_<?php echo $this->handle; ?>" value="true" <?php checked( 'true', $current_setting ); ?> />
                             <?php echo $this->option_description; ?>
                     </label>
@@ -176,8 +186,18 @@ if ( ! class_exists ( 'WP_LiveAdmin_Settings' ) ) :
 
             $user_id = get_current_user_id();
             $settings = $_POST['live_admin'];
+            $options = $_POST['live_admin_options'];
 
-            update_user_meta ( $user_id, 'live-admin', $settings );
+            if ( ! is_array ( $options ) ) {
+                return;
+            }
+
+            foreach ( $options as $option => &$value ) {
+                if ( isset ( $settings[$option] ) )
+                    $value = $settings[$option];
+            }
+
+            update_user_meta ( $user_id, 'live-admin', $options );
         }
 
 
