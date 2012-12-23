@@ -62,7 +62,7 @@ if (!class_exists('WP_LiveThemePreview')) :
             /**
              * Requires and includes
              */
-            require_once ( LIVE_DASHBOARD_DIR . 'lib/live-admin/live-admin.php' );
+            require_once ( WP_LTP_DIR . 'lib/live-admin/live-admin.php' );
             $this->settings = new WP_LiveAdmin_Settings(
                     'themes',
                     __('Live Theme Preview', 'live-theme-preview'),
