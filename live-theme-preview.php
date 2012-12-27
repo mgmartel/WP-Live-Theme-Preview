@@ -46,7 +46,7 @@ if (!class_exists('WP_LiveThemePreview')) :
             static $instance = false;
 
             if (!$instance) {
-                load_plugin_textdomain('live-theme-preview', false, WP_LTP_DIR . '/languages/');
+                load_plugin_textdomain('live-theme-preview', false, basename ( WP_LTP_DIR ) . '/languages/');
                 $instance = new WP_LiveThemePreview;
             }
 
