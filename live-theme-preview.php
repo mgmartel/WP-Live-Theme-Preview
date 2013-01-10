@@ -132,33 +132,6 @@ if (!class_exists('WP_LiveThemePreview')) :
         }
 
         /**
-         * Set the js vars and print the scripts
-         *
-         * Uses wp_ltp_js_vars filter.
-         *
-         * @global str $active_theme
-         * @since 0.1
-         */
-        public function print_scripts() {
-            global $active_theme;
-
-            $theme = ( isset ( $_GET['theme'] ) && ! empty ( $_GET['theme'] ) ) ? $_GET['theme'] : $active_theme;
-            $tmp = wp_get_theme( $theme );
-            $template = $tmp->template;
-            unset ( $tmp );
-
-            $args = apply_filters ( 'wp_ltp_js_vars', array (
-                "blog_url"                 => get_bloginfo('url'),
-                "previewed_theme"          => $theme,
-                "previewed_theme_template" => $template,
-            ) );
-
-            wp_localize_script( "live-theme-preview", 'wp_ltp', $args);
-
-            wp_print_scripts( array ('live-theme-preview', 'jquery') );
-        }
-
-        /**
          * Load the template
          *
          * @since 0.1
