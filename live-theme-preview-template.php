@@ -15,6 +15,8 @@ if ( ! class_exists ( 'WP_LiveThemePreview_Template' ) ) :
         protected $active_theme;
 
         public function __construct() {
+            do_action ( 'wp_ltp_init' );
+
             $this->menu = true;
             $this->capability = 'switch_themes';
 
@@ -140,7 +142,7 @@ if ( ! class_exists ( 'WP_LiveThemePreview_Template' ) ) :
         protected function close_button() {
             global $url, $return;
 
-            wp_reset_vars( array( 'url', 'return' ) );
+            //wp_reset_vars( array( 'url', 'return' ) );
             $url = urldecode( $url );
             $url = wp_validate_redirect( $url, home_url( '/' ) );
             if ( $return )
