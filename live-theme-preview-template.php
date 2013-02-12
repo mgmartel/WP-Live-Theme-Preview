@@ -20,9 +20,7 @@ if ( ! class_exists ( 'WP_LiveThemePreview_Template' ) ) :
             $this->menu = true;
             $this->capability = 'switch_themes';
 
-            $tmp = get_theme( get_current_theme() );
-            $this->active_theme = $tmp['Stylesheet'];
-            unset ( $tmp );
+            $this->active_theme = wp_get_theme()->get_stylesheet();
 
             $theme = ( isset ( $_GET['theme'] ) && ! empty ( $_GET['theme'] ) ) ? $_GET['theme'] : $this->active_theme;
             $template = wp_get_theme( $theme )->template;
