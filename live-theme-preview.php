@@ -3,7 +3,7 @@
 Plugin Name: Live Theme Preview
 Plugin URI: https://github.com/mgmartel/WP-Live-Theme-Preview
 Description: Live Theme Preview allows users to preview themes on their website before customizing or activating them.
-Version: 1.0
+Version: 1.0.1
 Author: Mike_Cowobo
 Author URI: http://trenvo.com
 
